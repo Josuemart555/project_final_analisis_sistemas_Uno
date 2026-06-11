@@ -1,0 +1,12 @@
+# CODEOWNERS — Sistema Hospitalario Integrado
+# Solo joshuacirilo y Josuemart555 pueden aprobar y mergear PRs a main.
+# GitHub requiere su aprobación explícita antes de cualquier merge.
+
+# Regla global: aplica a todos los archivos del repo
+* @joshuacirilo @Josuemart555
+
+# Archivos críticos — protección doble explícita
+.github/                @joshuacirilo @Josuemart555
+.github/workflows/      @joshuacirilo @Josuemart555
+README.md               @joshuacirilo @Josuemart555
+EQUIPO.md               @joshuacirilo @Josuemart555

@@ -1,0 +1,56 @@
+name: 📋 Issue Lifecycle
+
+on:
+  issues:
+    types: [opened]
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+
+jobs:
+  # ─────────────────────────────────────────────
+  # JOB 1: Etiquetar automáticamente issues nuevos
+  # ─────────────────────────────────────────────
+  label-new-issue:
+    name: Etiquetar issue nuevo como open
+    runs-on: ubuntu-latest
+    if: github.event_name == 'issues' && github.event.action == 'opened'
+    permissions:
+      issues: write
+    steps:
+      - name: Agregar etiqueta 'open' al issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              labels: ['open']
+            });
+            console.log(`✅ Issue #${context.issue.number} etiquetado como 'open'`);
+
+      - name: Comentar en el issue nuevo
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const body = `👋 Issue registrado correctamente.
+            
+            **Estado**: 🟢 OPEN — permanecerá abierto hasta que el PR que lo resuelve sea mergeado a \`main\` por un admin.
+            
+            **Para resolverlo:**
+            1. Creá tu rama: \`feature/descripcion-${context.payload.sender.login}\`
+            2. Implementá la solución
+            3. Abrí un PR a \`develop\` con \`Closes #${context.issue.number}\` en la descripción
+            4. Pedí review a un compañero
+            5. Un admin mergeará a \`main\` y este issue se cerrará automáticamente ✅
+            
+            > ⚠️ No cierres este issue manualmente. El cierre es automático vía PR mergeado.`;
+            
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: body
+            });

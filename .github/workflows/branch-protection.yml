@@ -1,0 +1,72 @@
+name: 🔒 Branch Protection — Validar PR
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  # ─────────────────────────────────────────────
+  # JOB 1: Bloquear push directo a main por no-admins
+  # ─────────────────────────────────────────────
+  check-pr-to-main:
+    name: Verificar que solo admins mergeen a main
+    runs-on: ubuntu-latest
+    if: github.base_ref == 'main'
+    steps:
+      - name: Obtener autor del PR
+        id: author
+        run: echo "PR autor = ${{ github.actor }}"
+
+      - name: Verificar si es admin autorizado
+        run: |
+          AUTHOR="${{ github.actor }}"
+          ADMINS="joshuacirilo Josuemart555"
+          if echo "$ADMINS" | grep -qw "$AUTHOR"; then
+            echo "✅ $AUTHOR es admin autorizado — PR a main permitido."
+          else
+            echo "❌ ERROR: Solo joshuacirilo y Josuemart555 pueden mergear PRs a main."
+            echo "   Tu PR debe ir a la rama 'develop', no a 'main'."
+            echo "   Cambiá el base branch de tu PR a 'develop' y volvé a intentar."
+            exit 1
+          fi
+
+  # ─────────────────────────────────────────────
+  # JOB 2: Validar formato del PR
+  # ─────────────────────────────────────────────
+  validate-pr:
+    name: Validar formato del PR
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verificar que el PR tiene descripción
+        run: |
+          BODY="${{ github.event.pull_request.body }}"
+          if [ -z "$BODY" ] || [ ${#BODY} -lt 30 ]; then
+            echo "❌ ERROR: El PR no tiene descripción suficiente."
+            echo "   Completá el template con descripción, issue que cierra y checklist."
+            exit 1
+          fi
+          echo "✅ PR tiene descripción válida."
+
+      - name: Verificar que el PR referencia un Issue
+        run: |
+          BODY="${{ github.event.pull_request.body }}"
+          if echo "$BODY" | grep -qiE "closes? #[0-9]+|fixes? #[0-9]+|resolves? #[0-9]+"; then
+            echo "✅ PR referencia un Issue correctamente."
+          else
+            echo "⚠️  ADVERTENCIA: El PR no referencia ningún Issue con 'Closes #N'."
+            echo "   Si este PR resuelve un issue, agregá 'Closes #N' en la descripción."
+            echo "   Los Issues se cierran automáticamente solo cuando se mergea a main."
+          fi
+
+      - name: Verificar nombre de rama
+        run: |
+          BRANCH="${{ github.head_ref }}"
+          if echo "$BRANCH" | grep -qE "^(feature|fix|docs|test|chore|refactor)/"; then
+            echo "✅ Nombre de rama válido: $BRANCH"
+          else
+            echo "⚠️  ADVERTENCIA: La rama '$BRANCH' no sigue la convención."
+            echo "   Usar: feature/, fix/, docs/, test/, chore/, refactor/"
+            echo "   Ejemplo: feature/crud-pacientes-githubhandle"
+          fi

@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 📖 Leer EQUIPO.md antes de abrir un issue
+    url: https://github.com/compilations-teams/Sistema-Hospitalario-Integrado/blob/main/EQUIPO.md
+    about: Revisá las asignaciones y reglas de colaboración del equipo.
+  - name: 📋 Ver tareas activas en GitHub Projects
+    url: https://github.com/compilations-teams/Sistema-Hospitalario-Integrado/projects
+    about: Revisá el tablero de tareas antes de crear un issue duplicado.
