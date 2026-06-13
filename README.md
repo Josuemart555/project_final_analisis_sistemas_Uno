@@ -71,6 +71,44 @@ Sin PHP/Composer/Node o sin BD configurada, el proyecto no podrá migrar ni comp
 
 ## Instalación y ejecución
 
+### Opción recomendada con Docker
+
+Este fork incluye una configuración Docker para levantar el backend Laravel, el frontend Vite y MySQL sin depender de la versión de PHP instalada en la máquina local.
+
+```bash
+docker compose up --build
+```
+
+Servicios disponibles:
+
+| Servicio | URL / puerto | Descripción |
+|----------|--------------|-------------|
+| Laravel API | `http://localhost:8000` | Backend Laravel 12 con PHP 8.3. |
+| Vue / Vite | `http://localhost:5173` | SPA de Vue 3. |
+| MySQL | `localhost:3306` | Base de datos `hospital_his`. |
+
+El contenedor `app` instala dependencias PHP, prepara `.env` cuando no existe, genera `APP_KEY` y `JWT_SECRET` si faltan, ejecuta migraciones, seeders y arranca Laravel.
+
+Credenciales demo para revisar el módulo 1:
+
+| Campo | Valor |
+|-------|-------|
+| Tenant | `00000000-0000-4000-8000-000000000001` |
+| Correo | `recepcionista@demo.test` |
+| Contraseña | `password` |
+| Rol | `Recepcionista` |
+
+Comandos útiles dentro de Docker:
+
+```bash
+docker compose exec app php artisan migrate:fresh --seed
+docker compose exec app php artisan route:list --path=api
+docker compose exec app php artisan test
+docker compose exec node npm run build
+```
+
+### Opción local sin Docker
+
 ```bash
 composer install
 cp .env.example .env
@@ -134,3 +172,19 @@ php artisan test
 ## Entrega esperada
 
 El estudiante debe trabajar sobre su propio fork del repositorio y entregar en Canvas el enlace al repositorio forkeado, junto con una breve descripción del módulo implementado y los commits principales que evidencian su avance.
+
+## Módulo implementado: Login y sesión
+
+Alumno: `1890-17-12512 - JOSUE MANUEL MARTINEZ PEDROZA`
+
+Repositorio fork: `https://github.com/Josuemart555/project_final_analisis_sistemas_Uno`
+
+El módulo 1 fortalece el inicio de sesión, cierre de sesión y manejo visual de sesión sobre la base existente de Laravel, Vue, JWT y tenant por cabecera `X-Tenant-ID`.
+
+Evidencia por sprints:
+
+| Sprint | Commit esperado | Evidencia |
+|--------|-----------------|-----------|
+| Sprint 1 | `Sprint 1: preparar Docker y base funcional de autenticacion` | Docker, entorno reproducible, seeders demo y documentación de ejecución. |
+| Sprint 2 | `Sprint 2: completar modulo de login y sesion` | Login completo, sesión visual, logout, guards y manejo de errores. |
+| Sprint 3 | `Sprint 3: agregar UML y documento de entrega` | Diagramas UML, documento Word y verificación final. |
