@@ -24,4 +24,23 @@ api.interceptors.request.use((config) => {
     return config;
 });
 
+api.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        const status = error?.response?.status;
+
+        if ([401, 403].includes(status)) {
+            localStorage.removeItem('auth_token');
+            localStorage.removeItem('auth_user');
+            window.dispatchEvent(new CustomEvent('auth:session-expired', {
+                detail: {
+                    message: error?.response?.data?.message ?? 'La sesión ya no es válida.',
+                },
+            }));
+        }
+
+        return Promise.reject(error);
+    },
+);
+
 export default api;

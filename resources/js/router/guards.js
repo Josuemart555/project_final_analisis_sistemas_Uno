@@ -1,7 +1,8 @@
 export function authGuard(to, from, next) {
     const token = localStorage.getItem('auth_token');
+    const tenantId = localStorage.getItem('tenant_id');
 
-    if (to.meta.requiresAuth && ! token) {
+    if (to.meta.requiresAuth && (! token || ! tenantId)) {
         next({ name: 'login' });
 
         return;

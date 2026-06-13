@@ -85,7 +85,7 @@ Servicios disponibles:
 |----------|--------------|-------------|
 | Laravel API | `http://localhost:8000` | Backend Laravel 12 con PHP 8.3. |
 | Vue / Vite | `http://localhost:5173` | SPA de Vue 3. |
-| MySQL | `localhost:3306` | Base de datos `hospital_his`. |
+| MySQL | `localhost:3307` | Base de datos `hospital_his`; dentro de Docker se usa el host `mysql:3306`. |
 
 El contenedor `app` instala dependencias PHP, prepara `.env` cuando no existe, genera `APP_KEY` y `JWT_SECRET` si faltan, ejecuta migraciones, seeders y arranca Laravel.
 
