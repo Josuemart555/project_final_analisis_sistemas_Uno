@@ -107,6 +107,16 @@ docker compose exec app php artisan test
 docker compose exec node npm run build
 ```
 
+Si aparece un error como `Database file at path [/var/www/html/database/database.sqlite] does not exist`, el proyecto está leyendo una configuración SQLite en lugar de la configuración MySQL esperada para Docker. El script `docker/app/start.sh` sincroniza automáticamente las variables de `docker-compose.yml` hacia `.env`, crea `database/database.sqlite` como respaldo local y limpia la configuración antes de migrar.
+
+Para corregirlo en una copia local ya levantada:
+
+```bash
+docker compose up -d --build app
+docker compose exec app php artisan config:clear
+docker compose exec app php artisan migrate --force
+```
+
 ### Opción local sin Docker
 
 ```bash
